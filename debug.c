@@ -32,6 +32,8 @@ size_t printOpcode(Chunk *chunk, size_t index) {
 			uint8_t constantIndex = chunk->bytecode[index+1];
 			return index+constantOpcode("OP_CONSTANT", constantIndex, chunk->constants.values[constantIndex]);
 		}
+		case OP_NEGATE:
+			return index + simpleOpcode("OP_NEGATE");
 		default:
 			printf("unknown instruction\n");
 			return index+1;
