@@ -1,5 +1,6 @@
 #include "vm.h"
 #include "debug.h"
+#include "compiler.h"
 
 VM vm;
 
@@ -65,8 +66,7 @@ InterpretResult run() {
 	}
 }
 
-InterpretResult interpret(Chunk *chunk) {
-	vm.chunk = chunk;
-	vm.ip = chunk->bytecode;
-	return run();
+InterpretResult interpret(char *source) {
+	compile(source);
+	return RESULT_OK;
 }
