@@ -28,6 +28,6 @@ typedef struct {
 
 void initChunk(Chunk *), freeChunk(Chunk *);
 void writeChunk(Chunk *, uint8_t, size_t);
-uint8_t addConstant(Chunk *, Value);
+int addConstant(Chunk *, Value);
 
 #endif

@@ -5,7 +5,6 @@
 VM vm;
 
 #define DEBUG_ENABLED
-// #undef DEBUG_ENABLED
 
 void push(Value v) {
 	*(vm.top++) = v;
@@ -67,6 +66,15 @@ InterpretResult run() {
 }
 
 InterpretResult interpret(char *source) {
-	compile(source);
+	Chunk chunk;
+	initChunk(&chunk);
+	if(!compile(source, &chunk)) {
+		freeChunk(&chunk);
+		return RESULT_COMPILE_ERROR;
+	}
+	vm.chunk = &chunk;
+	vm.ip = chunk.bytecode;
+	InterpretResult result = run();
+	freeChunk(&chunk);
 	return RESULT_OK;
 }

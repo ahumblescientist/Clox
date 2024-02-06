@@ -27,7 +27,7 @@ void freeChunk(Chunk *chunk) {
 	initChunk(chunk); // reset values
 }
 
-uint8_t addConstant(Chunk *chunk, Value value) {
+int addConstant(Chunk *chunk, Value value) {
 	writeValueArray(&chunk->constants, value);
-	return chunk->constants.index - 1;
+	return (int)(chunk->constants.index - 1);
 }
