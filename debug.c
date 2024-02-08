@@ -42,6 +42,20 @@ size_t printOpcode(Chunk *chunk, size_t index) {
 			return index + simpleOpcode("OP_MULTIPLY");
 		case OP_DIVIDE:
 			return index + simpleOpcode("OP_DIVIDE");
+		case OP_TRUE:
+			return index + simpleOpcode("OP_TRUE");
+		case OP_FALSE:
+			return index + simpleOpcode("OP_FALSE");
+		case OP_NIL:
+			return index + simpleOpcode("OP_NIL");
+		case OP_NOT:
+			return index + simpleOpcode("OP_NOT");
+		case OP_EQUAL:
+			return index + simpleOpcode("OP_EQUAL");
+		case OP_LESS:
+			return index + simpleOpcode("OP_LESS");
+		case OP_GREATER:
+			return index + simpleOpcode("OP_GREATER");
 		default:
 			printf("unknown instruction\n");
 			return index+1;
