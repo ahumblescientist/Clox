@@ -3,6 +3,8 @@
 #include "compiler.h"
 #include <stdarg.h>
 #include "value.h"
+#include "obj.h"
+#include <string.h>
 
 VM vm;
 
@@ -26,10 +28,12 @@ void resetStack() {
 }
 
 void initVM() {
+	vm.head = NULL;
 	resetStack();
 }
 
 void freeVM() {
+	freeObjects();
 }
 
 static void runtimeError(char *format, ...)  {
@@ -50,14 +54,16 @@ static uint8_t isFalsey(Value v) {
 	return !AS_BOOL(v);
 }
 
-static uint8_t valuesEqual(Value a, Value b) {
-	if(a.type != b.type) return 0;
-	switch(a.type) {
-		case VAL_NUMBER: return (AS_NUMBER(a) == AS_NUMBER(b)); break;
-		case VAL_BOOL: return (AS_BOOL(a) == AS_BOOL(b)); break;
-		case VAL_NIL: return 1;
-		default: return 0;
-	}
+static void concatenate() {
+	ObjString *y = AS_STRING(pop());
+	ObjString *x = AS_STRING(pop());
+	size_t length = y->length + x->length;
+	char *chars = ALLOCATE(char, length+1);
+	memcpy(chars, x->chars, x->length);
+	memcpy(chars+x->length, y->chars, y->length);
+	chars[length] = '\0';
+	ObjString *ret = takeString(chars, length);
+	push(OBJ_VAL(ret));
 }
 
 static uint8_t read() {
@@ -102,7 +108,17 @@ InterpretResult run() {
 				}
 				push(NUMBER_VAL(-AS_NUMBER(pop())));
 				break;	
-			case OP_ADD: BINARY_OP(NUMBER_VAL, +); break;
+			case OP_ADD: {
+				if(IS_STRING(peek(0)) && IS_STRING(peek(1))) {
+					concatenate(); 
+				} else if(IS_NUMBER(peek(0)) && IS_NUMBER(peek(0))) {
+					BINARY_OP(NUMBER_VAL, +);
+				} else {
+					runtimeError("Operands must be two numbers or two strnigs.");
+					return RESULT_RUNTIME_ERROR;
+				}
+			}
+			break;
 			case OP_SUBTRACT: BINARY_OP(NUMBER_VAL, -); break;
 			case OP_MULTIPLY: BINARY_OP(NUMBER_VAL, *); break;
 			case OP_DIVIDE: BINARY_OP(NUMBER_VAL, /); break;

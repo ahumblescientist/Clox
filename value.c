@@ -1,4 +1,6 @@
 #include "value.h"
+#include "obj.h"
+#include <string.h>
 
 void initValueArray(ValueArray *v) {
 	v->values = NULL;
@@ -25,5 +27,22 @@ void printValue(Value v) {
 		case VAL_NUMBER: printf("%g", AS_NUMBER(v)); break;
 		case VAL_NIL: printf("nil"); break;
 		case VAL_BOOL: printf(AS_BOOL(v) ? "true": "false"); break;
+		case VAL_OBJ: printObject(v); break;
+	}
+}
+
+uint8_t valuesEqual(Value a, Value b) {
+	if(a.type != b.type) return 0;
+	switch(a.type) {
+		case VAL_NUMBER: return (AS_NUMBER(a) == AS_NUMBER(b)); break;
+		case VAL_BOOL: return (AS_BOOL(a) == AS_BOOL(b)); break;
+		case VAL_NIL: return 1;
+		case VAL_OBJ: {
+			char *x = AS_CSTRING(a);
+			char *y = AS_CSTRING(b);
+			return ((!strcmp(x, y)) ? 1 : 0);
+		}
+		break;
+		default: return 0;
 	}
 }

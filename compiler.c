@@ -1,6 +1,7 @@
 #include "compiler.h"
 #include "scanner.h"
 #include "chunk.h"
+#include "obj.h"
 #include <stdlib.h>
 
 
@@ -27,7 +28,7 @@ typedef struct {
 	Precedence precedence;
 } ParseRule;
 
-static void expression(), parsePrecedence(Precedence), grouping(), number(), unary(), binary(), literal();
+static void expression(), parsePrecedence(Precedence), grouping(), number(), unary(), binary(), literal(), string();
 static ParseRule *getRule(TokenType);
 
 typedef struct {
@@ -61,7 +62,7 @@ ParseRule rules[] = {
   [TOKEN_LESS]          = {NULL,     binary,   PREC_COMPARISON},
   [TOKEN_LESS_EQUAL]    = {NULL,     binary,   PREC_COMPARISON},
   [TOKEN_IDENTIFIER]    = {NULL,     NULL,   PREC_NONE},
-  [TOKEN_STRING]        = {NULL,     NULL,   PREC_NONE},
+  [TOKEN_STRING]        = {string,     NULL,   PREC_NONE},
   [TOKEN_NUMBER]        = {number,   NULL,   PREC_NONE},
   [TOKEN_AND]           = {NULL,     NULL,   PREC_NONE},
   [TOKEN_CLASS]         = {NULL,     NULL,   PREC_NONE},
@@ -96,7 +97,7 @@ static void errorAt(Token *token, char *msg) {
 	parser.panicMode = 1;
 	printf("[line %zu] Error ", token->line);
 	if(token->type == TOKEN_EOF) {
-		printf("at the end.");
+		printf("at the end");
 	} else if(token->type != TOKEN_ERROR) {
 		printf("at '%.*s'", (int)token->length, token->start);
 	}
@@ -162,6 +163,10 @@ static void endCompiler() {
 static void number() {
 	double value = strtod(parser.prev.start, NULL);
 	emitConstant(NUMBER_VAL(value));
+}
+
+static void string() {
+  emitConstant(OBJ_VAL(copyString(parser.prev.start + 1, parser.prev.length - 2)));
 }
 
 static void unary() {
