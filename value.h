@@ -40,7 +40,7 @@ typedef struct {
 #define IS_OBJ(v) (v.type == VAL_OBJ)
 
 #define AS_NUMBER(v) ((double)(v.as.number))
-#define AS_BOOL(v) (v.as.boolean)
+#define AS_BOOL(v) ((v.as.boolean) ? 1 : 0)
 #define AS_OBJ(v) (v.as.obj)
 
 void initValueArray(ValueArray *);

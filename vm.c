@@ -29,10 +29,12 @@ void resetStack() {
 
 void initVM() {
 	vm.head = NULL;
+	initTable(&vm.strings);
 	resetStack();
 }
 
 void freeVM() {
+	freeTable(&vm.strings);
 	freeObjects();
 }
 
