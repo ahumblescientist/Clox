@@ -56,6 +56,18 @@ size_t printOpcode(Chunk *chunk, size_t index) {
 			return index + simpleOpcode("OP_LESS");
 		case OP_GREATER:
 			return index + simpleOpcode("OP_GREATER");
+		case OP_PRINT:
+			return index + simpleOpcode("OP_PRINT");
+		case OP_POP:
+			return index + simpleOpcode("OP_POP");
+		case OP_SET_GLOBAL:
+			return index + simpleOpcode("OP_SET_GLOBAL");
+		case OP_GET_GLOBAL:
+			return index + simpleOpcode("OP_GET_GLOBAL");
+		case OP_DEFINE_GLOBAL: {
+			uint8_t constantIndex = chunk->bytecode[index+1];
+			return index+constantOpcode("OP_DEFINE_GLOBAL", constantIndex, chunk->constants.values[constantIndex]);
+		}
 		default:
 			printf("unknown instruction\n");
 			return index+1;

@@ -30,10 +30,12 @@ void resetStack() {
 void initVM() {
 	vm.head = NULL;
 	initTable(&vm.strings);
+	initTable(&vm.globals);
 	resetStack();
 }
 
 void freeVM() {
+	freeTable(&vm.globals);
 	freeTable(&vm.strings);
 	freeObjects();
 }
@@ -136,6 +138,37 @@ InterpretResult run() {
 			break;
 			case OP_LESS: BINARY_OP(BOOL_VAL, <); break;
 			case OP_GREATER: BINARY_OP(BOOL_VAL, >); break;
+			case OP_PRINT: {
+				printValue(pop());
+				printf("\n");
+				break;
+			}
+			case OP_POP: pop();break;
+			case OP_DEFINE_GLOBAL: {
+				ObjString *name = AS_STRING(readConstant());
+				tableSet(&vm.globals, name, peek(0));
+				pop();
+				break;
+			}
+			case OP_GET_GLOBAL: {
+				ObjString *name = AS_STRING(readConstant());
+				Value value;
+				if(!tableGet(&vm.globals, name, &value)) {
+					runtimeError("Undefined variable '%s'.", name->chars);
+					return RESULT_RUNTIME_ERROR;
+				}
+				push(value);
+				break;
+			}
+			case OP_SET_GLOBAL: {
+				ObjString *name = AS_STRING(readConstant());
+				if(tableSet(&vm.globals, name, peek(0))) {
+					tableDel(&vm.globals, name);
+					runtimeError("Undefined variable '%s'.", name->chars);
+					return RESULT_RUNTIME_ERROR;
+				}
+				break;
+			}
 		}
 	}
 }

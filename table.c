@@ -103,7 +103,7 @@ ObjString *tableFindString(Table *table, char *string, size_t length, uint32_t h
 		Entry *entry = table->entries+index;
 		if(entry->key == NULL) {
 			if(IS_NIL(entry->value)) return NULL;
-		} else if(entry->key->length == length && hash == entry->key->hash && !strcmp(string, entry->key->chars)) {
+		} else if(entry->key->length == length && hash == entry->key->hash && !memcmp(string, entry->key->chars, length)) {
 			return entry->key;
 		}
 		index++;
