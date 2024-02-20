@@ -169,6 +169,16 @@ InterpretResult run() {
 				}
 				break;
 			}
+			case OP_GET_LOCAL: {
+				uint8_t slot = read();
+				push(vm.stack[slot]);
+				break;
+			}
+			case OP_SET_LOCAL: {
+				uint8_t slot = read();
+				vm.stack[slot] = peek(0);
+				break;
+			}
 		}
 	}
 }

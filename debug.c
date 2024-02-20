@@ -64,6 +64,10 @@ size_t printOpcode(Chunk *chunk, size_t index) {
 			return index + simpleOpcode("OP_SET_GLOBAL");
 		case OP_GET_GLOBAL:
 			return index + simpleOpcode("OP_GET_GLOBAL");
+		case OP_SET_LOCAL:
+			return index + simpleOpcode("OP_SET_LOCAL");
+		case OP_GET_LOCAL:
+			return index + simpleOpcode("OP_GET_LOCAL");
 		case OP_DEFINE_GLOBAL: {
 			uint8_t constantIndex = chunk->bytecode[index+1];
 			return index+constantOpcode("OP_DEFINE_GLOBAL", constantIndex, chunk->constants.values[constantIndex]);
